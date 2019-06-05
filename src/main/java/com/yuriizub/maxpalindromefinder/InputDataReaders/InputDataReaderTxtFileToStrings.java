@@ -16,16 +16,21 @@ public class InputDataReaderTxtFileToStrings implements InputDataReader {
     public List<String> readData(String sourceAddress) throws IOException {
         File inputFile = new File(sourceAddress);
         List<String> stringsList = new ArrayList();
-
-        try (BufferedReader br = new BufferedReader(new FileReader(inputFile))) {
-            for (String line; (line = br.readLine()) != null; ) {
-                line = Stream.of(line)
-                        .flatMap(s -> Stream.of(s.split(" ")))
-                        .map(s -> s.toLowerCase())
-                        .map(s -> s.replaceAll("[^a-zA-Zа-яА-Я]", ""))
-                        .filter(s -> s.length() > 0)
-                        .collect(Collectors.joining(" "));
-                stringsList.add(line);
+        if (inputFile.length() > 0) {
+            try (BufferedReader br = new BufferedReader(new FileReader(inputFile))) {
+                for (String line; (line = br.readLine()) != null; ) {
+                    line = Stream.of(line)
+                            .flatMap(s -> Stream.of(s.split(" ")))
+                            .map(s -> s.toLowerCase())
+                            .map(s -> s.replaceAll("[^a-zA-Zа-яА-Я]", ""))
+                            .filter(s -> s.length() > 0)
+                            .filter(s -> s != " ")
+                            .filter(s -> s != "")
+                            .filter(s -> !s.isEmpty())
+                            .collect(Collectors.joining(" "));
+                    stringsList.add(line);
+                }
+                stringsList.removeIf(String::isEmpty);
             }
         }
         return stringsList;

@@ -33,6 +33,7 @@ public class MaxPalindromeResolverFromFileToFile implements MaxPalindromeResolve
             }
             break;
             case 1: {
+
                 resolvingMaxPalindromeFromFileToFileWithStrings();
             }
             break;
@@ -51,23 +52,29 @@ public class MaxPalindromeResolverFromFileToFile implements MaxPalindromeResolve
         List<String> outputList = palindromeFinder.findPalindromes(inputList);
 
         outputList = processOnPalindromes(outputList);
-        savePalindromes (outputList);
+        savePalindromes(outputList);
     }
 
     private void resolvingMaxPalindromeFromFileToFileWithStrings() throws IOException {
         inputFileReader = new InputDataReaderTxtFileToStrings();
         List<String> inputList = inputFileReader.readData(this.inputParameters.getInputSourceAddress());
-
         palindromeFinder = new PalindromeFinderByString();
         List<String> outputList = palindromeFinder.findPalindromes(inputList);
-
-        outputList = processOnPalindromes(outputList);
-        savePalindromes (outputList);
+        if (outputList.size() > 0) {
+            outputList = processOnPalindromes(outputList);
+            savePalindromes(outputList);
+        }
 
     }
 
-    private List<String> getMaximalPalindromes(List<String> beforeList) {
+    private List<String> processOnPalindromes(List<String> outputList) {
+        outputList = getMaximalPalindromes(outputList);
+        outputList = getDistinctPalindromes(outputList);
+        outputList = sortPalindromes(outputList);
+        return outputList;
+    }
 
+    private List<String> getMaximalPalindromes(List<String> beforeList) {
         int longest = beforeList.stream()
                 .mapToInt(String::length)
                 .max()
@@ -79,19 +86,6 @@ public class MaxPalindromeResolverFromFileToFile implements MaxPalindromeResolve
         return afterLits;
     }
 
-    private List<String> processOnPalindromes(List<String> outputList) {
-        outputList = getMaximalPalindromes(outputList);
-        outputList = getDistinctPalindromes(outputList);
-        outputList = sortPalindromes(outputList);
-        return outputList;
-    }
-
-    private void savePalindromes(List<String> outputList) {
-        OutputObjectPalindromeList outputObject
-                = new OutputObjectPalindromeList(this.inputParameters.getOutputSourceAddress(), outputList);
-        outputFileWriter = new OutputDataWriterToTxtFile();
-        outputFileWriter.writeOutputObject(outputObject);
-    }
 
     private List<String> getDistinctPalindromes(List<String> beforeList) {
         List<String> afterList = beforeList.stream().distinct().collect(Collectors.toList());
@@ -106,4 +100,10 @@ public class MaxPalindromeResolverFromFileToFile implements MaxPalindromeResolve
         return aftertList;
     }
 
+    private void savePalindromes(List<String> outputList) {
+        OutputObjectPalindromeList outputObject
+                = new OutputObjectPalindromeList(this.inputParameters.getOutputSourceAddress(), outputList);
+        outputFileWriter = new OutputDataWriterToTxtFile();
+        outputFileWriter.writeOutputObject(outputObject);
+    }
 }
