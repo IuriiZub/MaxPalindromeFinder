@@ -10,6 +10,13 @@ import com.yuriizub.maxpalindromefinder.MaxPalindromeResolver.MaxPalindromeResol
  */
 public class Main {
 
+    String inputSourceAddress;
+    String outputSourceAddress;
+    boolean parallel = false;
+    int typeOfReading = 0;
+    int typeOfInputSource = 0;
+    int typeOfOutputSource = 0;
+
     public static void main(String args[]) {
         try {
             new Main().getAndSaveMaximalPalinrome(args);
@@ -19,18 +26,20 @@ public class Main {
     }
 
     private void getAndSaveMaximalPalinrome(String args[]) throws Exception {
-        String inputSourceAddress = args[0];
-        if (inputSourceAddress == null) throw new Exception("Input source address Should be set!");
-        String outputSourceAddress = args[1];
-        if (outputSourceAddress == null) throw new Exception("Output source address Should be set!");
-        boolean parallel = false;
-        if(args[2] != null) parallel = Boolean.getBoolean(args[2]);
-        int typeOfReading = 0;
-        if(args[3] != null) typeOfReading = Integer.parseInt(args[3]);
-        int typeOfInputSource = 0;
-        if(args[4] != null) typeOfInputSource = Integer.parseInt(args[4]);
-        int typeOfOutputSource = 0;
-        if(args[5] != null) typeOfOutputSource = Integer.parseInt(args[5]);
+
+        if(args.length == 0)
+        {
+            System.out.println("Input and output file names have to be set!");
+            System.exit(0);
+        }
+
+        if(args.length == 1)
+        {
+            System.out.println("Output file name have to be set!");
+            System.exit(0);
+        }
+
+        setInputParemeters(args);
 
         InputParameters inputParameters
                 = new InputParameters(inputSourceAddress, outputSourceAddress, parallel, typeOfReading);
@@ -38,6 +47,21 @@ public class Main {
         if (typeOfInputSource == 0 && typeOfOutputSource == 0) {
             MaxPalindromeResolver maxPalindromeResolver = new MaxPalindromeResolverFromFileToFile();
             maxPalindromeResolver.resolveMaximalPalindrome(inputParameters);
+        }
+    }
+
+    private void setInputParemeters(String args[]) {
+
+        inputSourceAddress = args[0];
+        outputSourceAddress = args[1];
+
+        try {
+            if (args[2] != null) parallel = Boolean.getBoolean(args[2]);
+            if (args[3] != null) typeOfReading = Integer.parseInt(args[3]);
+            if (args[4] != null) typeOfInputSource = Integer.parseInt(args[4]);
+            if (args[5] != null) typeOfOutputSource = Integer.parseInt(args[5]);
+        } catch (Exception e) {
+            System.out.println("Incorrect input parameters" + e.getMessage());
         }
     }
 }
